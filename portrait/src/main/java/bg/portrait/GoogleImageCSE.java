@@ -66,6 +66,7 @@ public class GoogleImageCSE {
 	}
 
 	private void processResponse(JSONObject json) {
+		
 		System.out.println("Bingo");
 		System.out.println("json:" + json);
 		
@@ -77,18 +78,8 @@ public class GoogleImageCSE {
 
 	private void processItem(Object e) {
 		JSONObject json = (JSONObject) e;
-		JSONObject pageMApJson = (JSONObject) json.get("pagemap");
-		if (pageMApJson.has("cse_image")) {
-			JSONArray cse_image = (JSONArray) pageMApJson.get("cse_image");
-			JSONObject srcJson = (JSONObject) cse_image.get(0);
-			String src = "" + srcJson.get("src");
-			System.out.println("cse_image " + src);
-		} else {
-			System.out.println(" No SRc!!!!");
-		}
-		for (String key : pageMApJson.keySet()) {
-			// System.out.println("----------- kk :"+key);
-		}
+		MetaImage metaImage = new MetaImage(json);
+		System.out.println(metaImage);
 
 	}
 
@@ -98,7 +89,7 @@ public class GoogleImageCSE {
 		s += "&key=AIzaSyDTF5H2ftyvGE7f1axSRvVnFepmbYouINI";
 		s += "&q=" + URLEncoder.encode("portrait xviiième", "utf-8");
 		s += "&start=" + startIndex;
-		// s += "&count=100";
+		
 		System.out.println(s);
 		return s;
 	}
