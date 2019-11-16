@@ -59,5 +59,10 @@ public class MetaImage {
 		}
 		return null;
 	}
+	
+	public boolean isValid() {
+		return ! (this.hashMd5== null);
+	}
 
+	
 }
