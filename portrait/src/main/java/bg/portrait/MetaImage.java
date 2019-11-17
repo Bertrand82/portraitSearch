@@ -2,6 +2,7 @@ package bg.portrait;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import bg.opencv.FaceDetection;
 import bg.portrait.util.HashImage;
 
 public class MetaImage {
@@ -20,6 +22,7 @@ public class MetaImage {
 	private JSONObject json;
 	private BufferedImage image;
 	private String hashMd5;
+	public static File DATA_ROOT = new File("/IMAGES");
 
 	public MetaImage(JSONObject json) {
 		try {
@@ -28,8 +31,7 @@ public class MetaImage {
 			this.image = processSrc(this.srcImage);
 			this.hashMd5 = HashImage.getHashImage(image);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("MetaImageException "+e.getClass().getName()+"  "+e.getMessage());
 		}
 	}
 
@@ -62,6 +64,34 @@ public class MetaImage {
 	
 	public boolean isValid() {
 		return ! (this.hashMd5== null);
+	}
+
+	public void store() {
+		try {
+			if (isValid()) {
+				File dir = getDirRoot();
+				dir.mkdirs();
+				String format ="jpg";
+				File fImage = new File(dir,hashMd5+"_master."+format);
+				ImageIO.write(image, format, fImage);
+				FaceDetection.getInstance().processFile(fImage);
+			}else {
+				System.err.println("NoValid!!! ");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	private File getDirRoot() {
+		File dir0 = new File(DATA_ROOT,""+this.hashMd5.charAt(0));
+		File dir1 = new File(dir0,""+this.hashMd5.charAt(1));
+		File dir2 = new File(dir1,""+this.hashMd5.charAt(2));
+		File dir3 = new File(dir2,""+this.hashMd5.charAt(3));
+		File dir = new File(dir3, this.hashMd5);
+		return dir;
 	}
 
 	

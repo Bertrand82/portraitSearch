@@ -53,7 +53,7 @@ public class FaceDetection {
 		getInstance().processFile(f1);
 	}
 
-	private void processFile(File f1) {
+	public void processFile(File f1) {
 		File dirImage = f1.getParentFile();
 		processFile(f1, new File(dirImage, OUT_CROP_BRUT), new File(dirImage,OUT_WORK ),new File(dirImage, OUT_CROP_NORMALIZED));
 	}
