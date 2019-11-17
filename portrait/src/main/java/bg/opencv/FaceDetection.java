@@ -1,6 +1,8 @@
 package bg.opencv;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,40 +14,54 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+/*
+ * For proper execution of native libraries
+		Core.NATIVE_LIBRARY_NAME must be loaded before
+		 calling any of the opencv methods
+		
+
+		Face detector creation by loading source cascade xml file
+		using CascadeClassifier.
+		 the file can be downloade from
+		 https://github.com/opencv/opencv/blob/master/data/haarcascades/
+		 haarcascade_frontalface_alt.xml
+		 and must be placed in same directory of the source java file
+*/
 public class FaceDetection {
-	CascadeClassifier faceDetector ;
+	public static String OUT_CROP_BRUT="CROP_BRUT";
+	public static String OUT_WORK = "WORK";
+	private CascadeClassifier faceDetector;
 
 	private FaceDetection() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		 faceDetector = new CascadeClassifier();
-		 faceDetector.load("haarcascade_frontalface_alt.xml");
+		faceDetector = new CascadeClassifier();
+		faceDetector.load("haarcascade_frontalface_alt.xml");
 	}
-    static FaceDetection instance = new FaceDetection();
-	public static void main(String[] args) {
 
-		// For proper execution of native libraries
-		// Core.NATIVE_LIBRARY_NAME must be loaded before
-		// calling any of the opencv methods
-		
+	static FaceDetection instance = new FaceDetection();
 
-		// Face detector creation by loading source cascade xml file
-		// using CascadeClassifier.
-		// the file can be downloade from
-		// https://github.com/opencv/opencv/blob/master/data/haarcascades/
-		// haarcascade_frontalface_alt.xml
-		// and must be placed in same directory of the source java file
-
-		File f1 = new File("D:\\input.jpg");
-		File dirTest = new File("OUT_TEST");
-		getInstance().processFile(f1,new File(dirTest,"OUT_CROP_BRUT"), new File(dirTest,"OUT_TEMP"));
+	public static void main(String[] args) throws Exception{
+		File dirOutTest = new File("OUT_TEST2");
+		dirOutTest.mkdirs();
+		File dir = new File("src/test/resources");
+		File f0 = new File(dir,"input.jpg");
+		System.err.println("f0 exists "+f0.exists());
+		File f1 = new File(dirOutTest,"input.jpg");
+		Files.copy(f0.toPath(), f1.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		getInstance().processFile(f1);
 	}
-	
+
+	private void processFile(File f1) {
+		File dirImage = f1.getParentFile();
+		processFile(f1, new File(dirImage, OUT_CROP_BRUT), new File(dirImage,OUT_WORK ));
+	}
+
 	public static FaceDetection getInstance() {
 		return instance;
 	}
 
-	public  void processFile(File f1, File dirCrop, File dirTemp) {
-		
+	public void processFile(File f1, File dirCrop, File dirTemp) {
+
 		System.err.println("faceDetector.load");
 		faceDetector.load("haarcascade_frontalface_alt.xml");
 
@@ -68,26 +84,25 @@ public class FaceDetection {
 					new Scalar(0, 255, 0));
 			Rect rectCrop = new Rect(rect.x, rect.y, rect.width, rect.height);
 			Mat image_roi = new Mat(image, rectCrop);
-			
+
 			dirCrop.mkdirs();
-			File fOut2 = new File(dirCrop, i++ + "_crop_brut."+getTypeImage(f1));
+			File fOut2 = new File(dirCrop, i++ + "_crop_brut." + getTypeImage(f1));
 			Imgcodecs.imwrite(fOut2.getAbsolutePath(), image_roi);
 		}
 
 		// Saving the output image
 
-		
 		dirTemp.mkdirs();
 		File fOut = new File(dirTemp, f1.getName());
 		Imgcodecs.imwrite(fOut.getAbsolutePath(), image);
-		System.err.println("Done "+f1.getName());
+		System.err.println("Done " + f1.getName());
 	}
 
 	private String getTypeImage(File f1) {
-		String suffix=null;
+		String suffix = null;
 		String name = f1.getName();
 		int i = name.lastIndexOf(".");
-		if (i>0) {
+		if (i > 0) {
 			suffix = name.substring(i);
 		}
 		return suffix;
