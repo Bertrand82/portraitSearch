@@ -25,12 +25,15 @@ public class CXGooogle {
 			FileReader  reader =new FileReader(fileProperties);
 			properties.load(reader);
 			CX = properties.getProperty(KEY_CX,"WARNING_CX_NO_DEFINE");
+			System.err.println("CX : "+CX);
 		} catch (Exception e) {
 			System.err.println("File Properties exists :"+fileProperties.exists()+"  "+fileProperties.getAbsolutePath());
 			e.printStackTrace();
 		} 
 	}
 	
-
+	public static void main(String[] a) {
+		System.err.println("done");
+	}
 	
 }

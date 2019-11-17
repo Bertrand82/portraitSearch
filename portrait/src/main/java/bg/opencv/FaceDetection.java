@@ -10,6 +10,7 @@ import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
@@ -28,6 +29,7 @@ import org.opencv.objdetect.CascadeClassifier;
 		 and must be placed in same directory of the source java file
 */
 public class FaceDetection {
+	private static final String OUT_CROP_NORMALIZED = "CROP_NORMALIZED";
 	public static String OUT_CROP_BRUT="CROP_BRUT";
 	public static String OUT_WORK = "WORK";
 	private CascadeClassifier faceDetector;
@@ -53,15 +55,16 @@ public class FaceDetection {
 
 	private void processFile(File f1) {
 		File dirImage = f1.getParentFile();
-		processFile(f1, new File(dirImage, OUT_CROP_BRUT), new File(dirImage,OUT_WORK ));
+		processFile(f1, new File(dirImage, OUT_CROP_BRUT), new File(dirImage,OUT_WORK ),new File(dirImage, OUT_CROP_NORMALIZED));
 	}
 
 	public static FaceDetection getInstance() {
 		return instance;
 	}
 
-	public void processFile(File f1, File dirCrop, File dirTemp) {
-
+	public void processFile(File f1, File dirCropBrut, File dirTemp, File dirCropNormalized) {
+		dirCropBrut.mkdirs();
+		dirCropNormalized.mkdirs();
 		System.err.println("faceDetector.load");
 		faceDetector.load("haarcascade_frontalface_alt.xml");
 
@@ -83,11 +86,17 @@ public class FaceDetection {
 			Imgproc.rectangle(image, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
 					new Scalar(0, 255, 0));
 			Rect rectCrop = new Rect(rect.x, rect.y, rect.width, rect.height);
-			Mat image_roi = new Mat(image, rectCrop);
-
-			dirCrop.mkdirs();
-			File fOut2 = new File(dirCrop, i++ + "_crop_brut." + getTypeImage(f1));
-			Imgcodecs.imwrite(fOut2.getAbsolutePath(), image_roi);
+			Mat image_crop = new Mat(image, rectCrop);
+			Mat image_crop_resized = new Mat();
+			Size sz = new Size(200,200);
+			Imgproc.resize( image_crop, image_crop_resized, sz );
+			
+			File fCrop = new File(dirCropBrut, i++ + "_crop_brut." + getTypeImage(f1));
+			Imgcodecs.imwrite(fCrop.getAbsolutePath(), image_crop);
+			
+			File fCropResized = new File(dirCropNormalized, i++ + "_crop." + getTypeImage(f1));
+			Imgcodecs.imwrite(fCropResized.getAbsolutePath(), image_crop_resized);
+			
 		}
 
 		// Saving the output image
