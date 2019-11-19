@@ -112,7 +112,7 @@ public class FaceDetection {
 		String name = f1.getName();
 		int i = name.lastIndexOf(".");
 		if (i > 0) {
-			suffix = name.substring(i);
+			suffix = name.substring(i+1);
 		}
 		return suffix;
 	}

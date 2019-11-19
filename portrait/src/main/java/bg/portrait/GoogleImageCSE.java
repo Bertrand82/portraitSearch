@@ -16,9 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import bg.custom.CXGooogle;
+import bg.portrait.achi.MetaImage;
 
 public class GoogleImageCSE {
 	private static final Logger logger = LoggerFactory.getLogger(GoogleImageCSE.class);
+	private static final Logger loggerGoogleCSE = LoggerFactory.getLogger("GoogleCSE");
 
 	private static String URL0 = "https://www.googleapis.com/customsearch/v1?";
 
@@ -42,7 +44,7 @@ public class GoogleImageCSE {
 			WebTarget webTarget = client.target(url);
 			Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 			Response response = invocationBuilder.get();
-			System.out.println("search  i:" + i + "  status : " + response.getStatus());
+			loggerGoogleCSE.info("search  i:" + i + "  status : " + response.getStatus()+"  url : "+url);
 			String responseAsString = response.readEntity(String.class);
 			if (response.getStatus() == 200) {
 				JSONObject json = new JSONObject(responseAsString);
@@ -52,19 +54,19 @@ public class GoogleImageCSE {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Excep "+e.getClass()+"   "+e.getMessage());;
 		}
 		return nextPage;
 	}
 	private int nextPage_Z_1=0;
 	private int searchNextPage(int ii) {
-		System.err.println("Start New Research :" + ii+"  nImage "+nbImages+"  nextPage_Z_1 :"+nextPage_Z_1);
+		logger.info("Start New Research :" + ii+"  nImage "+nbImages+"  nextPage_Z_1 :"+nextPage_Z_1);
 		nextPage_Z_1=ii;
 		int next =0;
 		if (ii > 0) {
 			next =search(ii);
 		} else {
-			System.err.println("No more page !!! ");
+			logger.info("No more page !!! ");
 		}
 		return next;
 	}
@@ -76,20 +78,19 @@ public class GoogleImageCSE {
 			JSONArray nextPageJsonAray = (JSONArray) queriesJson.get("nextPage");
 
 			JSONObject nextPageJson = (JSONObject) nextPageJsonAray.get(0);
-			System.out.println("---  :: " + nextPageJson);
+			logger.debug("---  :: " + nextPageJson);
 			int startIndex = (Integer) nextPageJson.get("startIndex");
 			String totalResults = "" + nextPageJson.get("totalResults");
 			return startIndex;
 		} catch (JSONException e) {
-			System.err.println("next Page Exception " + json);
-			e.printStackTrace();
+			logger.error("next Page Exception " + json,e);			
 			return -1;
 		}
 	}
 
 	private void processResponse(JSONObject json) {
 
-		System.out.println("json:" + json);
+		logger.info("json:" + json);
 
 		JSONArray itemsJsonAray = (JSONArray) json.get("items");
 
@@ -98,8 +99,8 @@ public class GoogleImageCSE {
 	int nbImages =0;
 	private void processItem(Object e) {
 		JSONObject json = (JSONObject) e;
-		MetaImage metaImage = new MetaImage(json);
-		System.out.println(metaImage);
+		MetaImage metaImage = new MetaImageGoogleCSE(json);
+		logger.info(""+metaImage);
 		metaImage.store();
 		if (metaImage.isValid()) {
 			nbImages++;
@@ -112,8 +113,6 @@ public class GoogleImageCSE {
 		s += "&key=AIzaSyDTF5H2ftyvGE7f1axSRvVnFepmbYouINI";
 		s += "&q=" + URLEncoder.encode("portrait xviiième", "utf-8");
 		s += "&start=" + startIndex;
-
-		System.out.println(s);
 		return s;
 	}
 

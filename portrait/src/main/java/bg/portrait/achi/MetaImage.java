@@ -1,4 +1,4 @@
-package bg.portrait;
+package bg.portrait.achi;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -7,16 +7,19 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.common.io.Files;
+
 import bg.opencv.FaceDetection;
 import bg.portrait.util.HashImage;
 
-public class MetaImage {
+abstract public  class MetaImage {
 
 	private String srcImage;
 	private JSONObject json;
@@ -27,7 +30,7 @@ public class MetaImage {
 	public MetaImage(JSONObject json) {
 		try {
 			this.json = json;
-			this.srcImage = processJson();
+			this.srcImage = extractSrcFromJson(json);
 			this.image = processSrc(this.srcImage);
 			this.hashMd5 = HashImage.getHashImage(image);
 		} catch (Exception e) {
@@ -50,17 +53,10 @@ public class MetaImage {
 	public String toString() {
 		return "MetaImage [srcImage=" + srcImage + ", image=" + image + "]+\n"+hashMd5;
 	}
-
-	private String processJson() {
-		JSONObject pageMApJson = (JSONObject) json.get("pagemap");
-		if (pageMApJson.has("cse_image")) {
-			JSONArray cse_image = (JSONArray) pageMApJson.get("cse_image");
-			JSONObject srcJson = (JSONObject) cse_image.get(0);
-			String src = (String) srcJson.get("src");
-			return src;
-		}
-		return null;
-	}
+	
+    public abstract String extractSrcFromJson(JSONObject json);
+    
+	
 	
 	public boolean isValid() {
 		return ! (this.hashMd5== null);
@@ -74,6 +70,7 @@ public class MetaImage {
 				String format ="jpg";
 				File fImage = new File(dir,hashMd5+"_master."+format);
 				ImageIO.write(image, format, fImage);
+				storeMetadata(dir);
 				FaceDetection.getInstance().processFile(fImage);
 			}else {
 				System.err.println("NoValid!!! ");
@@ -82,6 +79,14 @@ public class MetaImage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+
+	private void storeMetadata(File dir) throws IOException{
+		File dirMetaData = new File(dir,"META_DATA");
+		dirMetaData.mkdirs();
+		File fileJson = new File(dirMetaData,"metadata.json");
+		Files.write(""+this.json, fileJson, StandardCharsets.UTF_8);
 		
 	}
 
