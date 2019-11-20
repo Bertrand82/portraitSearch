@@ -1,6 +1,9 @@
 package bg.portrait.traitemment;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import bg.portrait.achi.MetaImage;
 
@@ -33,7 +36,19 @@ public class ParserImages {
 				}
 			}
 		}
-		System.out.println(sHtml);
+		try {
+			File file = new File("index.html");
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw= new BufferedWriter(fw);
+			bw.write("<!DOCTYPE html><html><head><title>Images</title></head><body>\n");
+			bw.write(sHtml);
+			bw.write("\n </body></html>\n");
+			bw.close();
+			System.out.println(sHtml);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private File getImageNormalized(File dir) {

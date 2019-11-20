@@ -1,4 +1,4 @@
-package bg.portrait;
+package bg.portrait.googleCSE;
 
 import java.net.URLEncoder;
 
@@ -60,7 +60,7 @@ public class GoogleImageCSE {
 	}
 	private int nextPage_Z_1=0;
 	private int searchNextPage(int ii) {
-		logger.info("Start New Research :" + ii+"  nImage "+nbImages+"  nextPage_Z_1 :"+nextPage_Z_1);
+		logger.info("Start New Research :" + ii+"  nImage "+nbImages+"  nbImagesInvalides:"+nbImagesInvalides+"  nextPage_Z_1 :"+nextPage_Z_1);
 		nextPage_Z_1=ii;
 		int next =0;
 		if (ii > 0) {
@@ -88,15 +88,17 @@ public class GoogleImageCSE {
 		}
 	}
 
-	private void processResponse(JSONObject json) {
+	public void processResponse(JSONObject json) {
 
 		logger.info("json:" + json);
-
 		JSONArray itemsJsonAray = (JSONArray) json.get("items");
-
 		itemsJsonAray.forEach(e -> processItem(e));
+		logger.info("nbImages:" + nbImages+"  nbImagesInvalides :"+nbImagesInvalides+"   length :"+itemsJsonAray.length());
 	}
+	
 	int nbImages =0;
+	int nbImagesInvalides =0;
+	
 	private void processItem(Object e) {
 		JSONObject json = (JSONObject) e;
 		MetaImage metaImage = new MetaImageGoogleCSE(json);
@@ -104,6 +106,8 @@ public class GoogleImageCSE {
 		metaImage.store();
 		if (metaImage.isValid()) {
 			nbImages++;
+		}else {
+			nbImagesInvalides++;
 		}
 	}
 

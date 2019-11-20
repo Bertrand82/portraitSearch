@@ -1,4 +1,4 @@
-package bg.portrait;
+package bg.portrait.googleCSE;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,5 +22,8 @@ public class MetaImageGoogleCSE extends MetaImage {
 		}
 		return null;
 	}
-
+	@Override
+	public String getType() {
+		return "GoogleCse";
+	}
 }

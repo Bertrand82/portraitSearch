@@ -14,27 +14,22 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.Files;
 
+import bg.portrait.googleCSE.GoogleImageCSE;
 import bg.portrait.serpwow.MetaImageSerpwow;
 
-class SerpwowTest {
+class GoogleCSETest {
 	 String text="";
 	@Test
 	void test() throws Exception{
 		assertTrue(true);
-		Path path = Paths.get(this.getClass().getResource("/serpwow.json").toURI());
+		Path path = Paths.get(this.getClass().getResource("/googlecse.json").toURI());
 		
 		List<String> lines  =Files.readLines( path.toFile() , Charset.defaultCharset());
 		lines.stream().forEach(e->text+=e+"\n");
 		System.out.println(text);
 		JSONObject jsonResponse = new JSONObject(text);
-		JSONArray jsonArray = jsonResponse.getJSONArray("inline_images");
-		System.out.println("inline_images : length :"+jsonArray.length());
-		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject json = jsonArray.getJSONObject(i);
-			MetaImageSerpwow meta = new MetaImageSerpwow(json);
-			meta.store();
-		}
-		
+		GoogleImageCSE googleImageCSE = new GoogleImageCSE();
+		googleImageCSE.processResponse(jsonResponse);
 		
 	}
 

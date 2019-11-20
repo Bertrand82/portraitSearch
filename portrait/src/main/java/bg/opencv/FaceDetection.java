@@ -14,6 +14,10 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import bg.portrait.googleCSE.GoogleImageCSE;
 
 /*
  * For proper execution of native libraries
@@ -29,6 +33,8 @@ import org.opencv.objdetect.CascadeClassifier;
 		 and must be placed in same directory of the source java file
 */
 public class FaceDetection {
+	private static final Logger logger = LoggerFactory.getLogger(FaceDetection.class);
+	
 	private static final String OUT_CROP_NORMALIZED = "CROP_NORMALIZED";
 	public static String OUT_CROP_BRUT="CROP_BRUT";
 	public static String OUT_WORK = "WORK";
@@ -68,11 +74,6 @@ public class FaceDetection {
 		System.err.println("faceDetector.load");
 		faceDetector.load("haarcascade_frontalface_alt.xml");
 
-		System.err.println(" f " + f1.exists() + "   " + f1.getAbsolutePath());
-		// https://github.com/opencv/opencv/blob/master/data/haarcascades/
-		// haarcascade_frontalface_alt.xml
-		// and must be placed in same directory of the source java file
-
 		// Input image
 		Mat image = Imgcodecs.imread(f1.getAbsolutePath());
 
@@ -96,7 +97,6 @@ public class FaceDetection {
 			
 			File fCropResized = new File(dirCropNormalized, i++ + "_crop." + getTypeImage(f1));
 			Imgcodecs.imwrite(fCropResized.getAbsolutePath(), image_crop_resized);
-			
 		}
 
 		// Saving the output image
@@ -104,7 +104,9 @@ public class FaceDetection {
 		dirTemp.mkdirs();
 		File fOut = new File(dirTemp, f1.getName());
 		Imgcodecs.imwrite(fOut.getAbsolutePath(), image);
-		System.err.println("Done " + f1.getName());
+		if (i == 0) {
+			logger.info("No Face Detected");
+		}
 	}
 
 	private String getTypeImage(File f1) {

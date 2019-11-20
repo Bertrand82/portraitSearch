@@ -1,4 +1,4 @@
-package bg.portrait;
+package bg.portrait.googleCSE;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

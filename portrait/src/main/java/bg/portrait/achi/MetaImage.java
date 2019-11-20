@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
@@ -20,7 +22,8 @@ import bg.opencv.FaceDetection;
 import bg.portrait.util.HashImage;
 
 abstract public  class MetaImage {
-
+	private static final Logger logger = LoggerFactory.getLogger(MetaImage.class);
+	
 	private String srcImage;
 	private JSONObject json;
 	private BufferedImage image;
@@ -34,11 +37,14 @@ abstract public  class MetaImage {
 			this.image = processSrc(this.srcImage);
 			this.hashMd5 = HashImage.getHashImage(image);
 		} catch (Exception e) {
-			System.err.println("MetaImageException "+e.getClass().getName()+"  "+e.getMessage());
+			logger.info("MetaImageException "+e.getClass().getName()+"  "+e.getMessage());
 		}
 	}
 
 	private BufferedImage processSrc(String urlStr) throws Exception {
+		if (urlStr == null) {
+			return null;
+		}
 		BufferedImage image = null;
 
 		URL url = new URL(urlStr);
@@ -73,22 +79,38 @@ abstract public  class MetaImage {
 				storeMetadata(dir);
 				FaceDetection.getInstance().processFile(fImage);
 			}else {
-				System.err.println("NoValid!!! ");
+				System.err.println("NoValid!!! "+diagnostic());
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Exception e : "+e.getMessage());;
 		}
 		
+	}
+
+	private String diagnostic() {
+		String  s="";
+		if (srcImage == null) {
+			s+=" No Image";
+		}
+		if (image == null) {
+			s+=" No Face";
+		}
+		return s;
 	}
 
 	private void storeMetadata(File dir) throws IOException{
 		File dirMetaData = new File(dir,"META_DATA");
 		dirMetaData.mkdirs();
 		File fileJson = new File(dirMetaData,"metadata.json");
-		Files.write(""+this.json, fileJson, StandardCharsets.UTF_8);
+		JSONObject jsonMetadata = new JSONObject();
+		jsonMetadata.accumulate("type", getType());
+		jsonMetadata.accumulate("response", json);
+		
+		Files.write(""+jsonMetadata, fileJson, StandardCharsets.UTF_8);
 		
 	}
+
+	abstract public String getType() ;
 
 	private File getDirRoot() {
 		File dir0 = new File(DATA_ROOT,""+this.hashMd5.charAt(0));
