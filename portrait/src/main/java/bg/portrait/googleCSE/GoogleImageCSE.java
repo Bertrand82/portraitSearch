@@ -22,14 +22,15 @@ public class GoogleImageCSE {
 	private static final Logger logger = LoggerFactory.getLogger(GoogleImageCSE.class);
 	private static final Logger loggerGoogleCSE = LoggerFactory.getLogger("GoogleCSE");
 
-	private static String URL0 = "https://www.googleapis.com/customsearch/v1?";
-
+	
 	Client client = ClientBuilder.newClient();
 
 	public void search() {
 		int nextPage = 1;
-		while (nextPage >0) {
+		int i =0;
+		while ((nextPage >0) && (i <=0)) {
 			nextPage = searchNextPage(nextPage);
+			i++;
 		}
 		
 		System.err.println("search done : nextPage:" + nextPage+"  nImage :"+nbImages+"  nextPage_Z_1 :"+nextPage_Z_1);
@@ -40,12 +41,13 @@ public class GoogleImageCSE {
 		int nextPage = -2;
 		try {
 			logger.debug("search " + i);
-			String url = getUrlIni(i);
+			String url = getUrlIni_V2(i);
 			WebTarget webTarget = client.target(url);
 			Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 			Response response = invocationBuilder.get();
 			loggerGoogleCSE.info("search  i:" + i + "  status : " + response.getStatus()+"  url : "+url);
 			String responseAsString = response.readEntity(String.class);
+			loggerGoogleCSE.info("response :"+responseAsString);
 			if (response.getStatus() == 200) {
 				JSONObject json = new JSONObject(responseAsString);
 				processResponse(json);
@@ -110,13 +112,26 @@ public class GoogleImageCSE {
 			nbImagesInvalides++;
 		}
 	}
-
-	private static String getUrlIni(int startIndex) throws Exception {
-		String s = URL0;
+	private static String URL_V2 ="https://cse.google.com/cse?";
+	private static String getUrlIni_V2(int startIndex) throws Exception {
+		String s = URL_V2;
 		s += "cx=" + URLEncoder.encode(CXGooogle.CX);
 		s += "&key=AIzaSyDTF5H2ftyvGE7f1axSRvVnFepmbYouINI";
 		s += "&q=" + URLEncoder.encode("portrait xviiième", "utf-8");
-		s += "&start=" + startIndex;
+		//s += "&start=" + startIndex;
+		s += "&imgType=face";
+		s+="&searchType=image";
+		return s;
+	}
+	private static String URL_V1 = "https://www.googleapis.com/customsearch/v1?";
+
+	private static String getUrlIni_v1(int startIndex) throws Exception {
+		String s = URL_V1;
+		s += "cx=" + URLEncoder.encode(CXGooogle.CX);
+		s += "&key=AIzaSyDTF5H2ftyvGE7f1axSRvVnFepmbYouINI";
+		s += "&q=" + URLEncoder.encode("portrait xviiième", "utf-8");
+		//s += "&start=" + startIndex;
+		s += "&imgType=face";
 		return s;
 	}
 
