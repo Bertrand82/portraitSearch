@@ -4,42 +4,67 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import bg.portrait.achi.MetaImage;
 
-
-
 public class ParserImages {
+	List<File> listDirFailled = new ArrayList<File>();
+	List<File> listDirOK = new ArrayList<File>();
 
 	public void parse() {
-		int i=0;
-		String sHtml ="";
+		int i = 0;
+		String sHtml = "";
+		String sHtmlFailed = "";
 		File dirRoot = MetaImage.DATA_ROOT;
-		for(File dir1 : dirRoot.listFiles()) {
+		for (File dir1 : dirRoot.listFiles()) {
 			if (dir1.isDirectory()) {
-				for(File dir2 : dir1.listFiles()) {
-					if (dir2.isDirectory()){
-						for(File dir3 : dir2.listFiles()) {
-						if (dir3.isDirectory()) {
-							for(File dir4 : dir3.listFiles()) {
-								if (dir4.isDirectory()) {
-									for(File dir5 : dir4.listFiles()) {
-										System.out.println(i+++" "+dir5.getName());
-										String d = getImageNormalized(dir5)+"\\1_crop.jpg";
-										sHtml+="<a href=\""+d+"\"><img src=\""+d+"\"></a>\n";
+				for (File dir2 : dir1.listFiles()) {
+					if (dir2.isDirectory()) {
+						for (File dir3 : dir2.listFiles()) {
+							if (dir3.isDirectory()) {
+								for (File dir4 : dir3.listFiles()) {
+									if (dir4.isDirectory()) {
+										for (File dir5 : dir4.listFiles()) {
+											System.out.println(i++ + " " + dir5.getName());
+											File image = getImageNormalized(dir5);
+											if (isOk(dir5)) {
+												sHtml += "<a href=\"" + dir5.getAbsolutePath() + "\"><img src=\"" + image.getAbsolutePath() + "\"></a>\n";
+												listDirOK.add(dir5);
+											} else {
+												File imageOriginale = getImageOriginale(dir5);
+												sHtmlFailed += "<a href=\"" + dir5.getAbsolutePath() + "\"><img src=\"" + imageOriginale.getAbsolutePath() + "\"></a>\n";
+												processDirFail(dir5);
+											}
+
+										}
 									}
 								}
 							}
-						}
 						}
 					}
 				}
 			}
 		}
+		save(sHtml, new File("index.html"));
+		save(sHtmlFailed, new File("indexFailled.html"));
+	}
+
+	private File getImageOriginale(File dir5) {
+		for (File f : dir5.listFiles()) {
+			if (f.getName().startsWith(dir5.getName())) {
+				return f;
+			}
+		}
+		return dir5;
+	}
+
+	private void save(String sHtml, File file) {
 		try {
-			File file = new File("index.html");
+
 			FileWriter fw = new FileWriter(file);
-			BufferedWriter bw= new BufferedWriter(fw);
+			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("<!DOCTYPE html><html><head><title>Images</title></head><body>\n");
 			bw.write(sHtml);
 			bw.write("\n </body></html>\n");
@@ -50,10 +75,35 @@ public class ParserImages {
 			e.printStackTrace();
 		}
 	}
-	
-	private File getImageNormalized(File dir) {
-		File dirN = new File(dir,"CROP_NORMALIZED");
+
+	private void processDirFail(File dir5) {
+		if (dir5.listFiles().length == 0) {
+			dir5.delete();
+		} else {
+			listDirFailled.add(dir5);
+		}
+
+	}
+
+	private boolean isOk(File dir) {
+		return this.getImageNormalized(dir).exists();
+	}
+
+	private File getDirImageNormalized(File dir) {
+		File dirN = new File(dir, "CROP_NORMALIZED");
 		return dirN;
+	}
+
+	private File getImageNormalized(File dir) {
+		File dirImage = getDirImageNormalized(dir);
+		File image = new File(dirImage, "1_crop.jpg");
+		return image;
+	}
+
+	public String synthese() {
+		String s = " ok : " + listDirOK.size();
+		s += "  fail " + listDirFailled.size();
+		return s;
 	}
 
 }
