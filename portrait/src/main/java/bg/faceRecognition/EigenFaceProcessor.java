@@ -19,7 +19,7 @@ import bg.portrait.util.UtilFile;
  * submitted image.
  *
  */
-public class EigenFaceCreator {
+public class EigenFaceProcessor {
 
 	private static final int MAGIC_SETNR = 16;
 	private FaceBundle[] faceBundle = null;
@@ -40,17 +40,7 @@ public class EigenFaceCreator {
 	 */
 	public final int USE_CACHE = 1;
 
-	private static FileFilter imageFilter = new FileFilter() {
-
-		public boolean accept(File f) {
-			String fName = f.getName();
-			if ((fName.endsWith(".ppm")) || (fName.endsWith(".pnm")) || (fName.endsWith(".jpg")) || (fName.endsWith(".jpeg"))) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	
 
 	/**
 	 * Match against the given file.
@@ -58,30 +48,31 @@ public class EigenFaceCreator {
 	 * @return The Identifier of the image in the face-space. If image not found
 	 *         (based on Seuill Mini) null is returned.
 	 */
-	public String checkAgainst(File file) throws Exception {
+	public String process(File file) throws Exception {
 
 		String id = null;
 		if (faceBundle == null) {
 			System.out.println("bundle is null !!!!!!!!!!! ");
-		} else {
-			double small = Double.MAX_VALUE;
-			int idx = -1;
-			IImage iimage = readIImage(file);
-			double[] imgArray = iimage.getDouble();
-			System.out.println("bundle length " + faceBundle.length);
-			for (int i = 0; i < faceBundle.length; i++) {
-				faceBundle[i].submitFace(imgArray);
-				System.out.println("small " + small + "  distance " + faceBundle[i].distance() + "  " + faceBundle[i].getIndexName());
-				if (small > faceBundle[i].distance()) {
-					small = faceBundle[i].distance();
-					idx = i;
-				}
-			}
-			distance = small;
-			if (small < SEUILL_MINI + 1) {
-				id = faceBundle[idx].getIndexName();
+			return null;
+		}
+		double small = Double.MAX_VALUE;
+		int idx = -1;
+		IImage iimage = readIImage(file);
+		double[] imgArray = iimage.getDouble();
+		System.out.println("bundle length " + faceBundle.length);
+		for (int i = 0; i < faceBundle.length; i++) {
+			faceBundle[i].submitFace(imgArray);
+			System.out.println("small " + small + "  distance " + faceBundle[i].distance() + "  " + faceBundle[i].getIndexName());
+			if (small > faceBundle[i].distance()) {
+				small = faceBundle[i].distance();
+				idx = i;
 			}
 		}
+		distance = small;
+		if (small < SEUILL_MINI + 1) {
+			id = faceBundle[idx].getIndexName();
+		}
+
 		return id;
 	}
 
@@ -106,8 +97,8 @@ public class EigenFaceCreator {
 	 *             face-space objects
 	 *
 	 */
-	public void readFaceBundles(File dirRoot) throws Exception {
-		File[] files = dirRoot.listFiles(imageFilter);
+	public void initProcessor(File dirRoot) throws Exception {
+		File[] files = dirRoot.listFiles(UtilFile.imageFilter);
 		List<File> filenames = Arrays.asList(files);
 
 		faceBundle = new FaceBundle[(files.length / MAGIC_SETNR) + 1];

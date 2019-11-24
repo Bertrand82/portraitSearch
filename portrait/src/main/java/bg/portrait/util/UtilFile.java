@@ -1,6 +1,7 @@
 package bg.portrait.util;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.security.MessageDigest;
 
@@ -65,5 +66,29 @@ public class UtilFile {
 			hexString += Integer.toString(a, 16).substring(1);
 		}
 		return hexString;
+	}
+	
+	public static FileFilter imageFilter = new FileFilter() {
+
+		public boolean accept(File f) {
+			String fName = f.getName();
+			if ((fName.endsWith(".ppm")) || (fName.endsWith(".pnm")) || (fName.endsWith(".jpg")) || (fName.endsWith(".jpeg"))) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+
+	public static String getType(File f) {
+		if (f == null) {
+			return "";
+		}
+		String name = f.getName();
+		int last = name.lastIndexOf(".");
+		if (last>0) {
+			return name.substring(last);
+		}
+		return null;
 	}
 }

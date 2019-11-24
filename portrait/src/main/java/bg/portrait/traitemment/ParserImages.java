@@ -40,7 +40,8 @@ public class ParserImages {
 												}
 											} else {
 												File imageOriginale = getImageOriginale(dir5);
-												sHtmlFailed += "<a href=\"" + dir5.getAbsolutePath() + "\"><img src=\"" + imageOriginale.getAbsolutePath() + "\"></a>\n";
+												String type = UtilFile.getType(imageOriginale);
+												sHtmlFailed += "<a href=\"" + dir5.getAbsolutePath() + "\"><img src=\"" + imageOriginale.getAbsolutePath() + "\"> "+type+"</a>\n";
 												processDirFail(dir5);
 											}
 

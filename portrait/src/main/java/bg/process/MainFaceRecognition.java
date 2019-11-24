@@ -5,7 +5,7 @@ import java.io.File;
 import bg.faceRecognition.ProcessFaceRecognition;
 import bg.opencv.FaceDetection;
 
-public class MainPrepareImage {
+public class MainFaceRecognition {
 	private static File dirWorking = new File("D:\\imagesWorking");
 
 	public static void main(String args[]) {
@@ -18,10 +18,12 @@ public class MainPrepareImage {
 			File dirNormalized = FaceDetection.getInstance().processFile(fileMaster);
 			File fileNormalized = dirNormalized.listFiles()[0];
 			if (fileNormalized == null) {
-				System.err.println("Aie aie aie is null");
+				System.err.println("Aie aie aie Pas de face detectée dans image : "+fileMaster.getAbsolutePath());
+				return;
 			}
-			System.out.println(" " + fileNormalized.exists() + "  " + fileNormalized.getAbsolutePath());
-			ProcessFaceRecognition.processImageNormaized(fileNormalized);
+			System.out.println("Exists : " + fileNormalized.exists() + "  " + fileNormalized.getAbsolutePath());
+			
+			ProcessFaceRecognition.processImageNormalized(fileNormalized);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

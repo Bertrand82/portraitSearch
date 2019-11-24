@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.core.FileAppender;
 
-public class MainGoogle {
+public class MainGoogleCSE {
 
-	private static final Logger logger = LoggerFactory.getLogger(MainGoogle.class);
+	private static final Logger logger = LoggerFactory.getLogger(MainGoogleCSE.class);
 
 	public static void main(String[] args) {
 		
