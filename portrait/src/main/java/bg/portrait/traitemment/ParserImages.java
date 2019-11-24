@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bg.portrait.achi.MetaImage;
+import bg.portrait.util.UtilFile;
 
 public class ParserImages {
+	
+	private final List<IProcessImageFile> listProcess = new ArrayList<>();
 	List<File> listDirFailled = new ArrayList<File>();
 	List<File> listDirOK = new ArrayList<File>();
 
@@ -17,7 +20,7 @@ public class ParserImages {
 		int i = 0;
 		String sHtml = "";
 		String sHtmlFailed = "";
-		File dirRoot = MetaImage.DATA_ROOT;
+		File dirRoot = UtilFile.DATA_ROOT;
 		for (File dir1 : dirRoot.listFiles()) {
 			if (dir1.isDirectory()) {
 				for (File dir2 : dir1.listFiles()) {
@@ -32,6 +35,9 @@ public class ParserImages {
 											if (isOk(dir5)) {
 												sHtml += "<a href=\"" + dir5.getAbsolutePath() + "\"><img src=\"" + image.getAbsolutePath() + "\"></a>\n";
 												listDirOK.add(dir5);
+												for(IProcessImageFile processor : this.listProcess) {
+													processor.process(dir5);
+												}
 											} else {
 												File imageOriginale = getImageOriginale(dir5);
 												sHtmlFailed += "<a href=\"" + dir5.getAbsolutePath() + "\"><img src=\"" + imageOriginale.getAbsolutePath() + "\"></a>\n";
@@ -50,6 +56,8 @@ public class ParserImages {
 		save(sHtml, new File("index.html"));
 		save(sHtmlFailed, new File("indexFailled.html"));
 	}
+
+
 
 	private File getImageOriginale(File dir5) {
 		for (File f : dir5.listFiles()) {
@@ -89,12 +97,12 @@ public class ParserImages {
 		return this.getImageNormalized(dir).exists();
 	}
 
-	private File getDirImageNormalized(File dir) {
+	public static File getDirImageNormalized(File dir) {
 		File dirN = new File(dir, "CROP_NORMALIZED");
 		return dirN;
 	}
 
-	private File getImageNormalized(File dir) {
+	public static File getImageNormalized(File dir) {
 		File dirImage = getDirImageNormalized(dir);
 		File image = new File(dirImage, "1_crop.jpg");
 		return image;
@@ -104,6 +112,10 @@ public class ParserImages {
 		String s = " ok : " + listDirOK.size();
 		s += "  fail " + listDirFailled.size();
 		return s;
+	}
+
+	public List<IProcessImageFile> getListProcess() {
+		return listProcess;
 	}
 
 }

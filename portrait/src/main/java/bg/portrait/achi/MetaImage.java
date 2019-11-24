@@ -20,16 +20,16 @@ import com.google.common.io.Files;
 
 import bg.opencv.FaceDetection;
 import bg.portrait.util.HashImage;
+import bg.portrait.util.UtilFile;
 
-abstract public  class MetaImage {
+abstract public class MetaImage {
 	private static final Logger logger = LoggerFactory.getLogger(MetaImage.class);
-	
+
 	private String srcImage;
 	private JSONObject json;
 	private BufferedImage image;
 	private String hashMd5;
-	public static File DATA_ROOT = new File("/IMAGES");
-
+	
 	public MetaImage(JSONObject json) {
 		try {
 			this.json = json;
@@ -37,7 +37,7 @@ abstract public  class MetaImage {
 			this.image = processSrc(this.srcImage);
 			this.hashMd5 = HashImage.getHashImage(image);
 		} catch (Exception e) {
-			logger.info("MetaImageException "+e.getClass().getName()+"  "+e.getMessage());
+			logger.info("MetaImageException " + e.getClass().getName() + "  " + e.getMessage());
 		}
 	}
 
@@ -57,15 +57,13 @@ abstract public  class MetaImage {
 
 	@Override
 	public String toString() {
-		return "MetaImage [srcImage=" + srcImage + ", image=" + image + "]+\n"+hashMd5;
+		return "MetaImage [srcImage=" + srcImage + ", image=" + image + "]+\n" + hashMd5;
 	}
-	
-    public abstract String extractSrcFromJson(JSONObject json);
-    
-	
-	
+
+	public abstract String extractSrcFromJson(JSONObject json);
+
 	public boolean isValid() {
-		return ! (this.hashMd5== null);
+		return !(this.hashMd5 == null);
 	}
 
 	public void store() {
@@ -73,53 +71,48 @@ abstract public  class MetaImage {
 			if (isValid()) {
 				File dir = getDirRoot();
 				dir.mkdirs();
-				String format ="jpg";
-				File fImage = new File(dir,hashMd5+"_master."+format);
+				String format = "jpg";
+				File fImage = new File(dir, hashMd5 + "_master." + format);
 				ImageIO.write(image, format, fImage);
 				storeMetadata(dir);
 				FaceDetection.getInstance().processFile(fImage);
-			}else {
-				System.err.println("NoValid!!! "+diagnostic());
+			} else {
+				System.err.println("NoValid!!! " + diagnostic());
 			}
 		} catch (IOException e) {
-			logger.warn("Exception e : "+e.getMessage());;
+			logger.warn("Exception e : " + e.getMessage());
+			;
 		}
-		
+
 	}
 
 	private String diagnostic() {
-		String  s="";
+		String s = "";
 		if (srcImage == null) {
-			s+=" No Image";
+			s += " No Image";
 		}
 		if (image == null) {
-			s+=" No Face";
+			s += " No Face";
 		}
 		return s;
 	}
 
-	private void storeMetadata(File dir) throws IOException{
-		File dirMetaData = new File(dir,"META_DATA");
+	private void storeMetadata(File dir) throws IOException {
+		File dirMetaData = new File(dir, "META_DATA");
 		dirMetaData.mkdirs();
-		File fileJson = new File(dirMetaData,"metadata.json");
+		File fileJson = new File(dirMetaData, "metadata.json");
 		JSONObject jsonMetadata = new JSONObject();
 		jsonMetadata.accumulate("type", getType());
 		jsonMetadata.accumulate("response", json);
-		
-		Files.write(""+jsonMetadata, fileJson, StandardCharsets.UTF_8);
-		
+
+		Files.write("" + jsonMetadata, fileJson, StandardCharsets.UTF_8);
+
 	}
 
-	abstract public String getType() ;
+	abstract public String getType();
 
 	private File getDirRoot() {
-		File dir0 = new File(DATA_ROOT,""+this.hashMd5.charAt(0));
-		File dir1 = new File(dir0,""+this.hashMd5.charAt(1));
-		File dir2 = new File(dir1,""+this.hashMd5.charAt(2));
-		File dir3 = new File(dir2,""+this.hashMd5.charAt(3));
-		File dir = new File(dir3, this.hashMd5);
-		return dir;
+		return UtilFile.getDirRootFromHashMd5(this.hashMd5);
 	}
 
-	
 }
