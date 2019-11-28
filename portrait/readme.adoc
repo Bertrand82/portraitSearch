@@ -1,17 +1,19 @@
 = Portrait
 
-Cette appli permet de crawler des moteurs de recherche pour recupérér des portraits, puis de reconaitre dans ces portraits une personne.
+Cette appli permet de 
+* Crawler des moteurs de recherche pour recupÃ©rÃ©r des images de et les stocker sur le disque.
+* ReconnaÃ®tre dans ces portraits une personne.
  
 == Installation de opencv
  
  Il n'y a pas de lib ou de jar opencv accessible par maven.
 Il faut donc:
 * recuperer opencv  sur son poste (https://opencv.org/releases/) ,
-* créer une lib; Window>preference>java>Build path>user lib avec les jar et dll de opencv precedemment importés.
-* Importer la lib dans le projet: 
-[Projet]>properties>java build pat>librairies>add Librairie>... rajouter la lib precedemment créée
-
-== Les points d'entrée
+* crÃ©er une lib; Window>preference>java>Build path>user lib avec les jar et dll de opencv precedemment importÃ©s.
+* Importer la lib dans le projet eclipse: 
+[Projet]>properties>java build pat>librairies>add Librairie>...
+* Rajouter la lib precedemment crÃ©Ã©e
+== Les points d'entrÃ©e
 
 * bg.portrait.qwant.MainQWant :
 
@@ -23,8 +25,8 @@ Recherche d'images sur google CSE. Necessite d'avoir un compte sur CSE.
 
 * bg.portrait.traitemment.MainParserImages :
 
-Permet de parser l'ensemble des images récupérés (Pour les compter, les copier, faire des recherches etc...)
+Permet de parser l'ensemble des images rÃ©cupÃ©rÃ©s (Pour les compter, les copier, faire des recherches etc...)
 
 * bg.process.MainFaceRecognition
 
-Applique un algo de reconnaissance à une image
+Applique un algo de reconnaissance Ã  une image
