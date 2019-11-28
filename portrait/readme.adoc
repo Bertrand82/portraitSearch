@@ -8,6 +8,7 @@ Cette appli permet de
  
  Il n'y a pas de lib ou de jar opencv accessible par maven.
 Il faut donc:
+
 * recuperer opencv  sur son poste (https://opencv.org/releases/) ,
 * créer une lib; Window>preference>java>Build path>user lib avec les jar et dll de opencv precedemment importés.
 * Importer la lib dans le projet eclipse: 
