@@ -13,6 +13,7 @@ Il faut donc:
 * Importer la lib dans le projet eclipse: 
 [Projet]>properties>java build pat>librairies>add Librairie>...
 * Rajouter la lib precedemment créée
+
 == Les points d'entrée
 
 * bg.portrait.qwant.MainQWant :
