@@ -36,7 +36,7 @@ public class EigenFaceProcessor {
 	/**
 	 * This determines if caching of face-spaces should be activated.
 	 */
-	public  boolean USE_CACHE = false;
+	public  boolean USE_CACHE = true  ;
 
 	private FaceBundle faceBundleBest = null;
 	
@@ -78,17 +78,7 @@ public class EigenFaceProcessor {
 	 * @param n
 	 *            The directory where the training images are located.
 	 *
-	 * @throws FileNotFoundException
-	 *             The <code>n</code> directory does not exist.
-	 * @throws IOException
-	 *             Problems reading images from the given directory or saving the
-	 *             cache file (if caching is enabled)
-	 * @throws IllegalArgumentException
-	 *             The arguments submitted are wrong.
-	 * @throws ClassNotFoundException
-	 *             The cached objects are out-of-date or are not this version's
-	 *             face-space objects
-	 *
+	 * @throws Exception
 	 */
 	public void initProcessor(File dirRoot) throws Exception {
 		File[] files = dirRoot.listFiles(UtilFile.imageFilter);

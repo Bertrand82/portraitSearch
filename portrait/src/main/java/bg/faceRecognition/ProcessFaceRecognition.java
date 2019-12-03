@@ -17,18 +17,18 @@ public class ProcessFaceRecognition {
 			System.out.println("Constructing face-spaces from " + dir + " ...");
 			processor.initProcessor(dir);
 			System.out.println(" " + imageNormalized.exists() + "  " + imageNormalized.getAbsolutePath());
-			String result = processor.process(imageNormalized);
+			FaceBundle result = processor.process(imageNormalized);
 			System.out.println("result : " + result);
 			if (result == null) {
 				System.out.println("No result ! ");
 				return null;
 			} else {
-				File fResult = new File(dir, result);
+				File fResult = new File(dir, result.getIndexName());
 				System.out.println("Most closly reseambling: " + result + " with " + processor.distanceBest + " distance.");
-				System.out.println(fResult.getAbsolutePath());
+				System.out.println("Exists : "+fResult.exists()+"  "+fResult.getAbsolutePath());
 				String hashMd5 = UtilFile.getHashFromFile(fResult);
 				File dir = UtilFile.getDirRootFromHashMd5(hashMd5);
-				System.out.println(dir.getAbsolutePath());
+				System.out.println(" dir : "+dir.getAbsolutePath());
 				return fResult;
 			}
 		} catch (Exception e) {
