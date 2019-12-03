@@ -1,7 +1,6 @@
 package bg.faceRecognition;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,24 +21,24 @@ import bg.portrait.util.UtilFile;
 public class EigenFaceProcessor {
 
 	private static final int MAGIC_SETNR = 16;
-	private FaceBundle[] faceBundle = null;
+	private FaceBundle[] faceBundleArray = null;
 	/**
 	 * Seuil minimal pour accepter une ressemblance
 	 */
 	public static double SEUILL_MINI = 3.0;
 
 	/**
-	 * Our minimum distance observed for the submitted image in the face-spaces.
+	 * Minimum distance observed for the submitted image in the face-spaces.
 	 *
 	 */
-	public double distance = Double.MAX_VALUE;
+	public double distanceBest = Double.MAX_VALUE;
 
 	/**
-	 * This determines if caching of face-spaces should be activated. Anything above
-	 * zero means yes. Anything else means no.
+	 * This determines if caching of face-spaces should be activated.
 	 */
-	public final int USE_CACHE = 1;
+	public  boolean USE_CACHE = false;
 
+	private FaceBundle faceBundleBest = null;
 	
 
 	/**
@@ -48,32 +47,26 @@ public class EigenFaceProcessor {
 	 * @return The Identifier of the image in the face-space. If image not found
 	 *         (based on Seuill Mini) null is returned.
 	 */
-	public String process(File file) throws Exception {
+	public FaceBundle process(File file) throws Exception {
 
-		String id = null;
-		if (faceBundle == null) {
-			System.out.println("bundle is null !!!!!!!!!!! ");
+		if (faceBundleArray == null) {
+			System.err.println("bundle is null !!!!!!!!!!! ");
 			return null;
 		}
-		double small = Double.MAX_VALUE;
-		int idx = -1;
+		distanceBest = Double.MAX_VALUE;
+		faceBundleBest = null;
 		IImage iimage = readIImage(file);
 		double[] imgArray = iimage.getDouble();
-		System.out.println("bundle length " + faceBundle.length);
-		for (int i = 0; i < faceBundle.length; i++) {
-			faceBundle[i].submitFace(imgArray);
-			System.out.println("small " + small + "  distance " + faceBundle[i].distance() + "  " + faceBundle[i].getIndexName());
-			if (small > faceBundle[i].distance()) {
-				small = faceBundle[i].distance();
-				idx = i;
+		System.err.println("bundle length " + faceBundleArray.length);
+		for (FaceBundle fb : faceBundleArray) {			
+			double distanceMin = fb.submitFace(imgArray);
+			System.err.println("distanceBest " + distanceBest + "  distance " + distanceMin + "  " + fb.getIndexName());
+			if (distanceBest > distanceMin) {
+				distanceBest = distanceMin;				
+				faceBundleBest = fb;
 			}
 		}
-		distance = small;
-		if (small < SEUILL_MINI + 1) {
-			id = faceBundle[idx].getIndexName();
-		}
-
-		return id;
+		return faceBundleBest;
 	}
 
 	/**
@@ -101,10 +94,10 @@ public class EigenFaceProcessor {
 		File[] files = dirRoot.listFiles(UtilFile.imageFilter);
 		List<File> filenames = Arrays.asList(files);
 
-		faceBundle = new FaceBundle[(files.length / MAGIC_SETNR) + 1];
+		faceBundleArray = new FaceBundle[(files.length / MAGIC_SETNR) + 1];
 
 		// Read each set of 16 images.
-		for (int i = 0; i < faceBundle.length; i++) {
+		for (int i = 0; i < faceBundleArray.length; i++) {
 			List<File> listFiles = new ArrayList<File>();
 			for (int j = 0; j < MAGIC_SETNR; j++) {
 				if (filenames.size() > j + MAGIC_SETNR * i) {
@@ -112,7 +105,7 @@ public class EigenFaceProcessor {
 					listFiles.add(f);
 				}
 			}
-			faceBundle[i] = submitSet(listFiles);
+			faceBundleArray[i] = submitSet(listFiles);
 		}
 	}
 
@@ -138,11 +131,11 @@ public class EigenFaceProcessor {
 		String hashStr = UtilFile.hashMd5(name);
 		File fileCache = new File(dirCache, hashStr + ".cache");
 		FaceBundle bundle = null;
-		if (fileCache.exists() && (USE_CACHE > 0)) /* it's cached */
+		if (fileCache.exists() && USE_CACHE ) /* it's cached */
 			bundle = readBundle(fileCache);
 		else {
 			bundle = computeBundle(dirCache, listFiles);
-			if (USE_CACHE > 0)
+			if (USE_CACHE )
 				saveFaceBundle(fileCache, bundle);
 		}
 

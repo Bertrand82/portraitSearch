@@ -24,7 +24,7 @@ public class ProcessFaceRecognition {
 				return null;
 			} else {
 				File fResult = new File(dir, result);
-				System.out.println("Most closly reseambling: " + result + " with " + processor.distance + " distance.");
+				System.out.println("Most closly reseambling: " + result + " with " + processor.distanceBest + " distance.");
 				System.out.println(fResult.getAbsolutePath());
 				String hashMd5 = UtilFile.getHashFromFile(fResult);
 				File dir = UtilFile.getDirRootFromHashMd5(hashMd5);

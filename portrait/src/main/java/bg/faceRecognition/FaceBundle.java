@@ -29,7 +29,7 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 	private double[][] eigVector = null;
 	private double[][] wk = null;
 	private List<File> listFiles = null;
-	private transient double minD = Double.MAX_VALUE;
+	private transient double distanceMin = Double.MAX_VALUE;
 	/**
 	 * The length of the vector-images stored in the face-space bundle. The
 	 * submitted image <b>MUST</b> of the same length or greater (if its greater
@@ -115,11 +115,12 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 	 *            The vector-array of the image. The image must be off <b>length</b>
 	 *
 	 */
-	public void submitFace(double[] face) {
+	public double submitFace(double[] face) {
 
 		this.cmpFace = face;
 		compute();
-
+		double distance = this.distance();
+		return distance;
 	}
 
 	/**
@@ -130,7 +131,7 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 		cmpFace = null;
 		computed = false;
 		idx = Integer.MAX_VALUE;
-		minD = Double.MAX_VALUE;
+		distanceMin = Double.MAX_VALUE;
 	}
 
 	/**
@@ -142,7 +143,7 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 	 */
 	public double distance() {
 
-		return minD;
+		return distanceMin;
 	}
 
 	/**
@@ -168,9 +169,9 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 	 */
 	public int compareTo(FaceBundle fb) {
 
-		if (fb.minD > minD) {
+		if (fb.distanceMin > distanceMin) {
 			return 1;
-		} else if (fb.minD < minD) {
+		} else if (fb.distanceMin < distanceMin) {
 			return -1;
 		} else {
 			return 0;
@@ -183,7 +184,7 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 	public String toString() {
 
 		if (computed)
-			return "[" + listFiles.get(idx).getName() + "] with " + minD;
+			return "[" + listFiles.get(idx).getName() + "] with " + distanceMin;
 		return "No image supplied";
 	}
 
@@ -245,7 +246,7 @@ public class FaceBundle implements Serializable, Comparable<FaceBundle> {
 		if (UtilArray.max(minDistance) > 0.0)
 			UtilArray.divide(minDistance, UtilArray.max(minDistance));
 
-		minD = UtilArray.sum(minDistance);
+		distanceMin = UtilArray.sum(minDistance);
 
 		computed = true;
 
