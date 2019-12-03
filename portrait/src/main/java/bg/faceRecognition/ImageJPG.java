@@ -17,7 +17,7 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
  * 
  * @version 1.0
  */
-public class JPGFile implements IImage {
+public class ImageJPG implements IImage {
 
 	private byte bytes[] = null; // bytes which make up binary PPM image
 	private double doubles[] = null;
@@ -25,7 +25,7 @@ public class JPGFile implements IImage {
 	private int height = 0;
 	private int width = 0;
 
-	public JPGFile(File file) throws Exception {
+	public ImageJPG(File file) throws Exception {
 		this.file = file;
 		readImage();
 	}

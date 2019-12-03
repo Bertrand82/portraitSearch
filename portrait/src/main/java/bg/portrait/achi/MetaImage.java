@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-import bg.opencv.FaceDetection;
+
 import bg.portrait.util.HashImage;
 import bg.portrait.util.UtilFile;
 
@@ -75,7 +75,7 @@ abstract public class MetaImage {
 				File fImage = new File(dir, hashMd5 + "_master." + format);
 				ImageIO.write(image, format, fImage);
 				storeMetadata(dir);
-				FaceDetection.getInstance().processFile(fImage);
+				bg.faceDetection.FaceDetection.getInstance().processFile(fImage);
 			} else {
 				System.err.println("NoValid!!! " + diagnostic());
 			}

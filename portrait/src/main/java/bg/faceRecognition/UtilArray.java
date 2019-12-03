@@ -1,33 +1,18 @@
 package bg.faceRecognition;
 
+import java.util.Arrays;
+import java.util.stream.DoubleStream;
+
 public class UtilArray {
 
 	/**
-	 * The max of array
+	 * Divide each element in array v by b 
+	 * No checking for division by zero.
 	 *
-	 * @param an
-	 *            array *
-	 * @return the max of the array
-	 */
-	public static double max(double[] a) {
-		double b = a[0];
-		for (int i = 0; i < a.length; i++)
-			if (a[i] > b)
-				b = a[i];
-
-		return b;
-	}
-
-	/**
-	 * Divide each element in <code>v</code> by <code>b</code> No checking for
-	 * division by zero.
+	 * @param v  array containing numbers.
+	 * @param b  scalar used to divied each element in the v vector
 	 *
-	 * @param v
-	 *            vector containing numbers.
-	 * @param b
-	 *            scalar used to divied each element in the v vector
-	 *
-	 * @return a vector having each element divided by <code>b</code> scalar.
+	 * @return the same array  with each element divided by b.
 	 *
 	 */
 	public static void divide(double[] v, double b) {
@@ -37,21 +22,22 @@ public class UtilArray {
 
 	}
 
-	/**
-	 * The sum of the vector.
-	 *
-	 * @param a
-	 *            vector with numbers
-	 * @return a scalar with the sum of each element in the <code>a</code> vector
-	 */
-	public static double sum(double[] a) {
+	public static double sum(final double[] a) {
+		return DoubleStream.of(a).sum();
+	}
 
-		double b = a[0];
-		for (int i = 0; i < a.length; i++)
-			b += a[i];
-
+	public static double sum(final Double[] a) {
+		final double b = Arrays.asList(a).stream().mapToDouble(e -> e).sum();
 		return b;
+	}
 
+	public static double max(final double[] a) {
+		return DoubleStream.of(a).max().getAsDouble();
+	}
+
+	public static double max(final Double[] a) {
+		final double b = Arrays.asList(a).stream().mapToDouble(e -> e).max().getAsDouble();
+		return b;
 	}
 
 }

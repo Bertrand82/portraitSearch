@@ -207,9 +207,9 @@ public class EigenFaceProcessor {
 			String fName = f.getName().toLowerCase();
 			IImage ifile = null;
 			if (fName.endsWith(".jpg") || fName.endsWith(".jpeg"))
-				ifile = new JPGFile(f);
+				ifile = new ImageJPG(f);
 			else if (fName.endsWith("ppm") || fName.endsWith("pnm"))
-				ifile = new PPMFile(f);
+				ifile = new ImagePPM(f);
 
 			listII.add(ifile);
 			if (width < 0) {
@@ -237,9 +237,9 @@ public class EigenFaceProcessor {
 		IImage ifile = null;
 		String temp = f.getName().toLowerCase();
 		if (temp.endsWith(".jpg")) {
-			ifile = new JPGFile(f);
+			ifile = new ImageJPG(f);
 		} else if (temp.endsWith(".ppm") || temp.endsWith(".pnm")) {
-			ifile = new PPMFile(f);
+			ifile = new ImagePPM(f);
 		}
 		return ifile;
 	}

@@ -1,4 +1,4 @@
-package bg.opencv;
+package bg.faceDetection;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -53,10 +53,18 @@ public class FaceDetection {
 		dirOutTest.mkdirs();
 		File dir = new File("src/test/resources");
 		File f0 = new File(dir,"input.jpg");
+		
 		System.err.println("f0 exists "+f0.exists());
-		File f1 = new File(dirOutTest,"input.jpg");
-		Files.copy(f0.toPath(), f1.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		getInstance().processFile(f1);
+		File fDest0 = new File(dirOutTest,"input.jpg");
+		Files.copy(f0.toPath(), fDest0.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		getInstance().processFile(fDest0);
+		
+		File dir2 = new File("D:/IMAGES/2/7/e/5/27e5b263baa4b6b809985527c0ca235d");
+		File f2 = new File(dir2,"27e5b263baa4b6b809985527c0ca235d_master.jpg");
+		File fDest2 = new File(dirOutTest,"input2.jpg");
+		Files.copy(f2.toPath(), fDest2.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		getInstance().processFile(fDest2);
+		
 	}
 
 	public File processFile(File f1) {

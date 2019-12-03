@@ -13,7 +13,7 @@ import java.io.IOException;
  *
  *
  */
-public class PPMFile implements IImage {
+public class ImagePPM implements IImage {
 
 	private byte bytes[] = null; // bytes which make up binary PPM image
 	private double doubles[] = null;
@@ -21,7 +21,7 @@ public class PPMFile implements IImage {
 	private int height = 0;
 	private int width = 0;
 
-	public PPMFile(File file) throws Exception {
+	public ImagePPM(File file) throws Exception {
 		this.file = file;
 		readImage();
 	}

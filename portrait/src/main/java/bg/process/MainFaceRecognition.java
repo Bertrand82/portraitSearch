@@ -2,8 +2,9 @@ package bg.process;
 
 import java.io.File;
 
+import bg.faceDetection.FaceDetection;
 import bg.faceRecognition.ProcessFaceRecognition;
-import bg.opencv.FaceDetection;
+
 
 public class MainFaceRecognition {
 	private static File dirWorking = new File("D:\\imagesWorking");
