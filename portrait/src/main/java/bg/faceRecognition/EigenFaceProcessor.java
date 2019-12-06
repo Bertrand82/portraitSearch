@@ -60,7 +60,7 @@ public class EigenFaceProcessor {
 		System.err.println("bundle length " + faceBundleArray.length);
 		for (FaceBundle fb : faceBundleArray) {			
 			double distanceMin = fb.submitFace(imgArray);
-			System.err.println("distanceBest " + distanceBest + "  distance " + distanceMin + "  " + fb.getIndexName());
+			System.err.println("distanceBest " + distanceBest + "  distance " + distanceMin + "  " + fb.getFileName());
 			if (distanceBest > distanceMin) {
 				distanceBest = distanceMin;				
 				faceBundleBest = fb;

@@ -12,8 +12,6 @@ public class ProcessFaceRecognition {
 
 		try {
 			EigenFaceProcessor processor = new EigenFaceProcessor();
-
-			// ProcessFaceRecognition.USE_CACHE = -1;
 			System.out.println("Constructing face-spaces from " + dir + " ...");
 			processor.initProcessor(dir);
 			System.out.println(" " + imageNormalized.exists() + "  " + imageNormalized.getAbsolutePath());
@@ -23,7 +21,7 @@ public class ProcessFaceRecognition {
 				System.out.println("No result ! ");
 				return null;
 			} else {
-				File fResult = new File(dir, result.getIndexName());
+				File fResult = new File(dir, result.getFileName());
 				System.out.println("Most closly reseambling: " + result + " with " + processor.distanceBest + " distance.");
 				System.out.println("Exists : "+fResult.exists()+"  "+fResult.getAbsolutePath());
 				String hashMd5 = UtilFile.getHashFromFile(fResult);

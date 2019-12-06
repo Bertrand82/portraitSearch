@@ -40,4 +40,20 @@ public class UtilArray {
 		return b;
 	}
 
+	public static double[] toDouble(byte[] b) {
+		double[] result = new double[b.length];
+		for (int i = 0; i < b.length; i++) {
+			result[i] = (double) (b[i] & 0xFF);
+		}
+		return result;
+	}
+
+	public static double[] toDouble(int[] b) {
+		double[] result = new double[b.length];
+		for (int i = 0; i < b.length; i++) {
+			result[i] = (double) (b[i] & 0xFF);
+		}
+		return result;
+	}
+
 }
