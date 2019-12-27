@@ -36,7 +36,7 @@ public class EigenFaceProcessor {
 	/**
 	 * This determines if caching of face-spaces should be activated.
 	 */
-	public  boolean USE_CACHE = true  ;
+	public static boolean USE_CACHE = true  ;
 
 	private FaceBundle faceBundleBest = null;
 	
@@ -85,32 +85,37 @@ public class EigenFaceProcessor {
 		List<File> filenames = Arrays.asList(files);
 
 		faceBundleArray = new FaceBundle[(files.length / MAGIC_SETNR) + 1];
-
+		
+		System.err.println("files.length _____ "+files.length);
 		// Read each set of 16 images.
 		for (int i = 0; i < faceBundleArray.length; i++) {
 			List<File> listFiles = new ArrayList<File>();
 			for (int j = 0; j < MAGIC_SETNR; j++) {
-				if (filenames.size() > j + MAGIC_SETNR * i) {
-					File f = filenames.get(j + MAGIC_SETNR * i);
+				int ii =j + MAGIC_SETNR * i;
+				if (ii <filenames.size()  ) {
+					File f = filenames.get(ii);
 					listFiles.add(f);
 				}
 			}
-			faceBundleArray[i] = submitSet(listFiles);
+			System.err.println("i _____ "+i+"   listFile "+listFiles.size());
+			faceBundleArray[i]=createFaceBundle(listFiles);
+			
 		}
+		
+		
 	}
+	
 
 	/**
 	 * Submit a set of sixteen images in the <code>dir</code> directory and
 	 * construct a face-space object. This can be done either by reading the cached
 	 * objects (if there are any) or computing the {@link FaceBundle}.
-	 *
-	 * @param dir:
-	 *            les images
+	 *	
 	 * @param files
-	 *            : String array of the names of the files (ie: "image01.jpg")
+	 *            : list files (ie: "image01.jpg")
 	 * 
 	 */
-	private FaceBundle submitSet(List<File> listFiles) throws Exception {
+	private FaceBundle createFaceBundle(List<File> listFiles) throws Exception {
 		File dirCache = UtilFile.DATA_CACHE;
 		dirCache.mkdirs();
 
