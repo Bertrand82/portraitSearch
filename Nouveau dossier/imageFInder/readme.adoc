@@ -1,0 +1,6 @@
+== Google's Custom Search Engine (CSE) API.
+== Api de recherche google
+https://www.googleapis.com/customsearch/v1
+
+ Note that this is limited to 100 free requests per day. 
+== liens
